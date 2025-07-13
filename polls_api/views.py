@@ -3,7 +3,7 @@ from polls_api.serializers import *
 from rest_framework import generics
 
 # Create your views here.
-class QuestionList(generics.CreateAPIView):
+class QuestionList(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
