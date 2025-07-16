@@ -1,6 +1,7 @@
 from polls.models import *
 from polls_api.serializers import *
 from rest_framework import generics
+from django.contrib.auth.models import User
 
 # Create your views here.
 class QuestionList(generics.ListCreateAPIView):
@@ -16,6 +17,14 @@ class QuestionList(generics.ListCreateAPIView):
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset =  User.objects.all()
+    serializer_class = UserSerializer
 
     # def get(self, request, *args, **kwargs):
     #     return self.retrieve(request, *args, **kwargs)
