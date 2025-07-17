@@ -12,8 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "password"]
-    
+        fields = ["id", "username", "questions"] 
+   
     # serializers.Serializer를 상속받았을 때는 아래와 같이 모든 것을 수동으로 정의해야 함
     
     # id = serializers.IntegerField(read_only=True)
