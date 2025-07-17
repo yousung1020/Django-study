@@ -497,3 +497,17 @@
 
 *   **사용자 질문:** `Question`에서는 `owner`로 `User`를 확인하고, `User`에서는 `questions`로 해당 유저의 `Question` 정보를 확인할 수 있는지 최종 확인했습니다.
 *   **Gemini 답변:** 네, 정확히 그렇게 이해하면 된다고 확인하며, Django ORM에서 1:N 관계를 다루는 핵심적인 방법임을 강조했습니다.
+
+---
+
+### 주제: DRF `PrimaryKeyRelatedField` 심층 분석 (2025-07-16 추가)
+
+**90. `PrimaryKeyRelatedField`의 의미**
+
+*   **사용자 질문:** `serializers.py`의 `PrimaryKeyRelatedField`가 의미하는 바를 잘 모르겠습니다.
+*   **Gemini 답변:** 모델 간의 관계를 해당 객체의 **기본 키(Primary Key) 값**으로 표현하는 필드임을 설명했습니다. 읽기(Serialization) 시에는 객체를 ID로, 쓰기(Deserialization) 시에는 ID를 객체로 변환하는 역할을 하며, 'ID 카드 번호'에 비유하여 설명했습니다.
+
+**91. `queryset` 인수의 역할**
+
+*   **사용자 질문:** `queryset`이 `Question`의 `owner`를 통해 사용자를 조회한다는 의미인지 질문했습니다.
+*   **Gemini 답변:** 조회(읽기)가 아닌, **쓰기(생성/수정) 시점의 유효성 검사**를 위한 것임을 명확히 했습니다. 클라이언트가 보낸 ID 값이 `queryset`으로 지정된 '후보 목록'에 실제로 존재하는지 확인하는 '초대 명단' 역할을 한다고 '클럽 가드'에 비유하여 설명했습니다.
