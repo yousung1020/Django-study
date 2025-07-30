@@ -1,12 +1,17 @@
 from polls.models import *
 from polls_api.serializers import *
-from rest_framework import generics
+from rest_framework import generics, permissions
 from django.contrib.auth.models import User
+from .permissions import IsOwnerOrReadOnly
 
 # Create your views here.
 class QuestionList(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
     # def get(self, request, *args, **kwargs):
     #     return self.list(request, *args, **kwargs)
@@ -17,6 +22,7 @@ class QuestionList(generics.ListCreateAPIView):
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -25,6 +31,9 @@ class UserList(generics.ListAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset =  User.objects.all()
     serializer_class = UserSerializer
+
+class RegisterUser(generics.CreateAPIView):
+    serializer_class = RegisterSerializer  
 
     # def get(self, request, *args, **kwargs):
     #     return self.retrieve(request, *args, **kwargs)
