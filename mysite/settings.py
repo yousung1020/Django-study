@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polls.apps.PollsConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'polls_api.apps.PollsApiConfig',
 ]
 
