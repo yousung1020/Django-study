@@ -1,20 +1,40 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from polls.models import Question, Choice, Vote
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
 # VoteList에서 나의 투표 내역을 보여주거나, 새로운 투표를 생성할 때 사용됨
 class VoteSerializer(serializers.ModelSerializer):
-    voter = serializers.ReadOnlyField(source="voter.username")
-
+    # 사용자가 엉뚱한 question, choice 조합으로 투표하는 것을 막음
+    def validate(self, attrs):
+        # Choice 객체에 연결된 Question의 id와 사용자가 투표하려는 Question의 id가 다르면 ValidationError를 발생시킴
+        if(attrs["choice"].question.id != attrs["question"].id):
+            raise serializers.ValidationError("Question과 Choice의 조합이 맞지 않습니다.")
+        
+        return attrs
+    
     class Meta:
         model = Vote
         fields = ["id", "question", "choice", "voter"]
 
+        # serializer 전체에 적용되는 유효성 검사 규칙들의 목록(is_valid()가 호출될 때)
+        validators = [
+            # UniqueTogetherValidator: 여러 필드를 묶어서 유일성(중복 여부)을 검사함
+            UniqueTogetherValidator(
+                # queryset: 검사 대상이 되는 데이터 범위
+                queryset=Vote.objects.all(),
+                # fields: 어떤 필드들의 조합이 유일해야 하는지를 지정
+                fields = ["question", "voter"]
+            )
+        ]
+
 # Question의 상세 정보를 보여줄 때, 각 선택지의 내용을 어떤 형식으로 보여줄지 정의함
 class ChoiceSerializer(serializers.ModelSerializer):
-    # 값이 메서드에 의해서 결정되는 필드
-    # 즉, 데이터베이스 필드에서 직접 가져오는 것이 아니라, get_vote_count 메서드를 호출한 결과로 채워짐
+    """
+    값이 메서드에 의해서 결정되는 필드
+    즉, 데이터베이스 필드에서 직접 가져오는 것이 아니라, get_vote_count 메서드를 호출한 결과로 채워짐
+    """
     vote_count = serializers.SerializerMethodField()
     
     class Meta:
